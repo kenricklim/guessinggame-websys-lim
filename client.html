@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff; 
+            color: #333; 
+            padding: 20px;
+            margin: 0;
+        }
+
+        #game-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff; 
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        input[type="number"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #007bff; 
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3; 
+        }
+
+        #feedback {
+            font-weight: bold;
+            color: #007bff; 
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Guess the Number!</h1>
+        <p>I'm thinking of a number between 1 and 100.</p>
+        <p id="feedback">Make your guess!</p>
+        <form id="guess-form">
+            <input type="number" id="guess-input" placeholder="Enter your guess" required>
+            <button type="submit">Submit Guess</button>
+        </form>
+    </div>
+    <script>
+        const form = document.getElementById('guess-form');
+        const feedback = document.getElementById('feedback');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const guess = document.getElementById('guess-input').value;
+
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `guess=${guess}`,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    feedback.textContent = data.message;
+                    if (data.game_over) {
+                        alert('You guessed correctly! Starting a new game...');
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
